@@ -1,0 +1,12 @@
+.button{
+    background: blue;
+    color: white;
+    padding:10px 20px;
+    border-radius:6px;
+}
+.my-btn{
+    font-size:24px;
+}
+.body{
+    background: #1819fa;
+}
