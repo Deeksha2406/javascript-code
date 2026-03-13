@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart To-Do List</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(120deg,#84fab0,#8fd3f4);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container {
+    background:white;
+    width:470px;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+h2 { text-align:center; }
+
+.input-box {
+    display:flex;
+    gap:6px;
+    margin-bottom:10px;
+}
+
+input {
+    flex:1;
+    padding:8px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button {
+    padding:7px 10px;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-size:12px;
+}
+
+.add-btn { background:#28a745; color:white; }
+.delete-btn { background:red; color:white; }
+.edit-btn { background:orange; color:white; }
+
+.section-title {
+    margin-top:12px;
+    font-weight:bold;
+}
+
+ul {
+    list-style:none;
+    padding:0;
+}
+
+li {
+    background:#f4f4f4;
+    padding:8px;
+    margin-bottom:6px;
+    border-radius:6px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.completed span {
+    text-decoration:line-through;
+    color:gray;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>🔔 Smart To-Do List</h2>
+
+    <div class="input-box">
+        <input type="text" id="taskInput" placeholder="Enter task...">
+        <button class="add-btn" onclick="addTask()">Add</button>
+    </div>
+
+    <div class="section-title">⏳ Pending Tasks</div>
+    <ul id="pendingList"></ul>
+
+    <div class="section-title">✅ Completed Tasks</div>
+    <ul id="completedList"></ul>
+</div>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("notifyTasks")) || [];
+
+if(Notification.permission !== "granted"){
+    Notification.requestPermission();
+}
+
+function notify(msg){
+    if(Notification.permission === "granted"){
+        new Notification(msg);
+    }
+}
+
+function saveTasks(){
+    localStorage.setItem("notifyTasks", JSON.stringify(tasks));
+}
+
+function renderTasks(){
+    let pending = document.getElementById("pendingList");
+    let completed = document.getElementById("completedList");
+    pending.innerHTML="";
+    completed.innerHTML="";
+
+    tasks.forEach((task,index)=>{
+        let li=document.createElement("li");
+
+        li.innerHTML=`
+            <span>${task.text}</span>
+            <div>
+                <button class="edit-btn" onclick="editTask(${index})">Edit</button>
+                <button onclick="toggleTask(${index})">✔</button>
+                <button class="delete-btn" onclick="deleteTask(${index})">X</button>
+            </div>
+        `;
+
+        if(task.completed){
+            li.classList.add("completed");
+            completed.appendChild(li);
+        } else {
+            pending.appendChild(li);
+        }
+    });
+}
+
+function addTask(){
+    let text=document.getElementById("taskInput").value.trim();
+    if(text==="") return;
+
+    tasks.push({text, completed:false});
+    document.getElementById("taskInput").value="";
+    saveTasks();
+    renderTasks();
+    notify("Task Added: " + text);
+}
+
+function toggleTask(i){
+    tasks[i].completed=!tasks[i].completed;
+    saveTasks();
+    renderTasks();
+    notify(tasks[i].completed ? "Task Completed 🎉" : "Task moved to Pending");
+}
+
+function deleteTask(i){
+    notify("Task Deleted ❌");
+    tasks.splice(i,1);
+    saveTasks();
+    renderTasks();
+}
+
+function editTask(i){
+    let newText = prompt("Edit task:", tasks[i].text);
+    if(newText !== null && newText.trim() !== ""){
+        tasks[i].text = newText.trim();
+        saveTasks();
+        renderTasks();
+        notify("Task Updated ✏");
+    }
+}
+
+document.getElementById("taskInput").addEventListener("keypress", function(e){
+    if(e.key==="Enter") addTask();
+});
+
+renderTasks();
+</script>
+
+</body>
+</html>

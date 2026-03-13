@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Simple CAPTCHA</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+    <div class="captcha-box" id="captcha"></div>
+
+    <input type="text" id="input" placeholder="Enter CAPTCHA">
+    <button onclick="checkCaptcha()">Submit</button>
+</div>
+
+<script>
+let captcha = Math.random().toString(36).substring(2,7);
+document.getElementById("captcha").innerText = captcha;
+
+function checkCaptcha(){
+    let user = document.getElementById("input").value;
+    if(user === captcha){
+        alert("Correct CAPTCHA");
+    } else {
+        alert("Wrong CAPTCHA");
+    }
+}
+</script>
+
+</body>
+</html>

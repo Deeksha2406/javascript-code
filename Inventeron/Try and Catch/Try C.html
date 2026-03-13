@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Try Catch Example</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="Try and Catch/try catch.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Try-Catch Demo</h2>
+
+    <input type="text" id="input" placeholder="Enter a number">
+    <button onclick="checkNumber()">Check</button>
+
+    <p id="result"></p>
+</div>
+
+<script>
+function checkNumber() {
+    let value = document.getElementById("input").value;
+    let result = document.getElementById("result");
+
+    try {
+        if (value === "") {
+            throw "Input is empty!";
+        }
+
+        if (isNaN(value)) {
+            throw "Not a number!";
+        }
+
+        if (value < 0) {
+            throw "Negative number not allowed!";
+        }
+
+        result.innerText = "Valid number: " + value;
+        result.style.color = "green";
+
+    } catch (error) {
+        result.innerText = error;
+        result.style.color = "red";
+
+    } finally {
+        console.log("Execution completed");
+    }
+}
+</script>
+
+</body>
+</html>
